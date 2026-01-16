@@ -30,40 +30,22 @@ runs:
         enable-cache: false
         pyproject-file: "${{ github.action_path }}/pyproject.toml"
 
-    # When docker-tag is specified, pull that specific tag directly
-    - name: Pull atopile container by tag
-      if: ${{ inputs.docker-tag != '' }}
-      run: >
-        docker pull
-        "ghcr.io/atopile/atopile-kicad:${{ inputs.docker-tag }}"
-      shell: bash
-
-    - name: Tag atopile container (docker-tag)
-      if: ${{ inputs.docker-tag != '' }}
-      run: >
-        docker tag
-        "ghcr.io/atopile/atopile-kicad:${{ inputs.docker-tag }}"
-        "atopile-local"
-      shell: bash
-
-    # When docker-tag is NOT specified, use the standard version resolution
-    - id: determine-atopile-version
-      if: ${{ inputs.docker-tag == '' }}
+    - name: Determine atopile version
+      id: determine-atopile-version
       run: uv run --project "${{ github.action_path }}" --directory "${{ inputs.working-directory }}" python "${{ github.action_path }}/main.py" >> $GITHUB_OUTPUT
       shell: bash
       env:
+        DOCKER_TAG: ${{ inputs.docker-tag }}
         ATO_CONFIG: ${{ inputs.ato-config }}
         SPECIFIED_VERSION: ${{ inputs.version }}
 
     - name: Pull atopile container
-      if: ${{ inputs.docker-tag == '' }}
       run: >
         docker pull
         "ghcr.io/atopile/atopile-kicad:${{ steps.determine-atopile-version.outputs.version }}"
       shell: bash
 
     - name: Tag atopile container
-      if: ${{ inputs.docker-tag == '' }}
       run: >
         docker tag
         "ghcr.io/atopile/atopile-kicad:${{ steps.determine-atopile-version.outputs.version }}"
