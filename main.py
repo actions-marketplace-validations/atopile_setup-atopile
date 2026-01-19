@@ -132,6 +132,11 @@ def get_released_versions() -> list[Version]:
 
 
 def main():
+    # Docker tag takes highest precedence - use it directly
+    if docker_tag := os.environ.get("DOCKER_TAG"):
+        print(f"version={docker_tag}")
+        return
+
     if os.environ.get("ATO_CONFIG") and os.environ.get("SPECIFIED_VERSION"):
         raise ValueError("Cannot specify both ATO_CONFIG and SPECIFIED_VERSION")
 

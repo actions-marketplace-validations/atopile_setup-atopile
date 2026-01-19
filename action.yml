@@ -13,6 +13,10 @@ inputs:
     description: "A specific version of atopile to use"
     required: false
     default: ""
+  docker-tag:
+    description: "A Docker image tag to pull (e.g., 'feature-fabll_part2', 'pr-123', 'sha-abc1234'). Overrides version/ato-config."
+    required: false
+    default: ""
   working-directory:
     description: "Working directory where to look for ato.yaml config"
     required: false
@@ -26,10 +30,12 @@ runs:
         enable-cache: false
         pyproject-file: "${{ github.action_path }}/pyproject.toml"
 
-    - id: determine-atopile-version
+    - name: Determine atopile version
+      id: determine-atopile-version
       run: uv run --project "${{ github.action_path }}" --directory "${{ inputs.working-directory }}" python "${{ github.action_path }}/main.py" >> $GITHUB_OUTPUT
       shell: bash
       env:
+        DOCKER_TAG: ${{ inputs.docker-tag }}
         ATO_CONFIG: ${{ inputs.ato-config }}
         SPECIFIED_VERSION: ${{ inputs.version }}
 
