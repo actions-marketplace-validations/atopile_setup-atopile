@@ -15,6 +15,7 @@ prepare_env_args() {
 ATO_ENV_ARGS=$(prepare_env_args "ATO_")
 GITHUB_ENV_ARGS=$(prepare_env_args "GITHUB_")
 GIT_ENV_ARGS=$(prepare_env_args "GIT_")
+FBRK_ENV_ARGS=$(prepare_env_args "FBRK_")
 
 # Run the command inside the container
 docker run --rm -i \
@@ -24,6 +25,7 @@ docker run --rm -i \
     ${ATO_ENV_ARGS} \
     ${GITHUB_ENV_ARGS} \
     ${GIT_ENV_ARGS} \
+    ${FBRK_ENV_ARGS} \
     -v "$(pwd)":"$(pwd)" \
     -w "$(pwd)" \
     --entrypoint ato \
